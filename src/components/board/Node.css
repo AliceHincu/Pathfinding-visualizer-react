@@ -5,7 +5,47 @@
     display: inline-block;
 }
   
-.node-unvisited {
+.unvisited-node {
     background-color: white; 
 }
+
+.start-node{
+    background-color: green;
+    cursor: pointer;
+}
+
+.target-node {
+    background-color: red;
+    cursor: pointer;
+}
   
+.wall-node{
+    background-color: #343f56;
+    outline: 1px solid rgba(95, 110, 143, 0.5);
+    user-select: none;
+    cursor: pointer;
+
+    animation-name: obstacleAnimation;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+}
+
+
+@keyframes obstacleAnimation {
+    0% {
+      transform: scale(0.3);
+      border-radius: 100%;
+    }
+  
+    75% {
+      transform: scale(1.5);
+    }
+  
+    100% {
+      transform: scale(1);
+    }
+  }

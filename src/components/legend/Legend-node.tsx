@@ -1,4 +1,5 @@
 import { SQUARE_SIZE } from "../../constants/dimensions";
+import './Legend.css';
 
 interface LegendNodeProps {
     title: string,

@@ -1,5 +1,3 @@
-import { SQUARE_SIZE } from "../../constants/dimensions";
-import { COLUMN_COUNT, ROW_COUNT } from "../../constants/grid-details";
 import { selectGrid } from "../../redux-features/boardSlice"
 import { useAppSelector } from "../../redux-features/hooks"
 import { generateNodeKey } from "../../utils/GridUtils";
@@ -8,7 +6,6 @@ import './Board.css';
 
 const Board = () => {
     const grid = useAppSelector(selectGrid);
-    console.log(grid);
 
     return(
         <div className="grid">
@@ -17,12 +14,12 @@ const Board = () => {
               return (
                 <div className="grid-row" key={rowIndex}>
                   {
-                    row.map((col, colIndex) => {
+                    row.map((node, colIndex) => {
                       return (
                         <Node 
                           key={generateNodeKey(rowIndex, colIndex)}
-                          row={rowIndex} 
-                          col={colIndex}/>);
+                          node={node}
+                        />);
                     })
                   }
                 </div>

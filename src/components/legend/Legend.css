@@ -12,7 +12,7 @@
     margin-right: 2rem;
 }
 
-.unvisited-node{
+.column-container .unvisited-node{
     background-color: white;
     border: none;
     outline: 2px solid rgba(52, 63, 86, 0.5);
@@ -20,21 +20,21 @@
     cursor: pointer;
 }
 
-.start-node{
+.column-container .start-node{
     background-color: green;
     border: none;
     outline: 2px solid green;
     margin-right: 0.5rem;
 }
 
-.target-node{
+.column-container .target-node{
     background-color: red;
     border: none;
     outline: 2px solid red;
     margin-right: 0.5rem;
 }
 
-.wall-node{
+.column-container .wall-node{
     background-color: #343f56;
     border: none;
     outline: 2px solid #343f56;
@@ -42,7 +42,7 @@
     cursor: pointer;
 }
 
-.weight-node{
+.column-container .weight-node{
     background-color: #8597be;
     border: none;
     outline: 2px solid #8597be;
