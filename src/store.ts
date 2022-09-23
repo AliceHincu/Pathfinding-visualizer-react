@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
-import nodeReducer from './redux-features/node/nodeSlice'
+import nodeReducer from './redux-features/nodeSlice'
+import boardReducer from './redux-features/boardSlice'
 // ...
 
 export const store = configureStore({
   reducer: {
     node: nodeReducer,
+    board: boardReducer
   },
 })
 

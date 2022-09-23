@@ -1,0 +1,11 @@
+.node {
+    font-size: 10px;
+    outline: 1px solid rgba(52, 63, 86, 0.5);
+    user-select: none;
+    display: inline-block;
+}
+  
+.node-unvisited {
+    background-color: white; 
+}
+  

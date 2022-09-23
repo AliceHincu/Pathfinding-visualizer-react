@@ -1,9 +1,9 @@
 import { LEGEND_HEIGHT } from '../../constants/dimensions'
 import { START, TARGET, UNVISITED, WALL } from '../../constants/node-types';
 import { useAppDispatch } from '../../redux-features/hooks';
-import { changeType } from '../../redux-features/node/nodeSlice';
+import { changeType } from '../../redux-features/nodeSlice';
 import LegendNode from './Legend-node';
-import './Legend.css'
+import './Legend.css';
 
 const Legend = () => {
     const dispatch = useAppDispatch();
