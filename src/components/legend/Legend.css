@@ -1,0 +1,61 @@
+.legend-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.column-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 2rem;
+}
+
+.unvisited-node{
+    background-color: white;
+    border: none;
+    outline: 2px solid rgba(52, 63, 86, 0.5);
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.start-node{
+    background-color: green;
+    border: none;
+    outline: 2px solid green;
+    margin-right: 0.5rem;
+}
+
+.target-node{
+    background-color: red;
+    border: none;
+    outline: 2px solid red;
+    margin-right: 0.5rem;
+}
+
+.wall-node{
+    background-color: #343f56;
+    border: none;
+    outline: 2px solid #343f56;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.weight-node{
+    background-color: #8597be;
+    border: none;
+    outline: 2px solid #8597be;
+    margin-right: 0.5rem;
+    cursor: pointer;
+
+    text-align: center;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.column-container > p{
+    text-align: left;
+    font-size: 1.2rem;
+    font-weight: 400;
+}
