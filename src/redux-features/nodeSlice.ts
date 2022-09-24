@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { WALL } from '../constants/node-types'
 import type {RootState} from '../store'
 
 interface NodeState {
@@ -6,7 +7,7 @@ interface NodeState {
 }
 
 const initialState: NodeState = {
-  type: 'unvisited',
+  type: WALL,
 }
 
 export const nodeSlice = createSlice({
