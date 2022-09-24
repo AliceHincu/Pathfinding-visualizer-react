@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { SQUARE_SIZE } from '../../constants/dimensions';
 import { NOT_PRESSED } from '../../constants/mouse';
 import { START, TARGET, UNVISITED, WALL } from '../../constants/node-types';
-import { mouseNotPressed, mousePressed, selectMouse, toggleWallNode } from '../../redux-features/boardSlice';
+import { isMousePressed, NodeCoords, selectMouse, selectStart, selectTarget, setStartNode, setTargetNode, startIsDragged, targetIsDragged, toggleWallNode } from '../../redux-features/boardSlice';
 import { useAppDispatch } from '../../redux-features/hooks';
 import { selectNodeType } from '../../redux-features/nodeSlice';
 import { NodeInterface } from '../../utils/GridUtils';
@@ -15,8 +15,11 @@ interface NodeProps{
 }
 
 const Node = ({node}: NodeProps) => {
+    const nodeCoords: NodeCoords = {row: node.row, col: node.col};
     const nodeDraggedType = useSelector(selectNodeType);
     const mouseState = useSelector(selectMouse);
+    const isStartDragged = useSelector(selectStart);
+    const isTargetDragged = useSelector(selectTarget);
     const dispatch = useAppDispatch();
 
     console.log(`The node (${node.row}, ${node.col}) was rendered`)
@@ -32,31 +35,42 @@ const Node = ({node}: NodeProps) => {
     const onMouseDownHandler = () => {
         if(!node.isFinish && !node.isStart) {
             if(nodeDraggedType === WALL)
-                dispatch(toggleWallNode({row: node.row, col: node.col}))
+                dispatch(toggleWallNode(nodeCoords))
         }
 
-        dispatch(mousePressed())
+        if(node.isStart)
+            dispatch(startIsDragged(true))
+        if(node.isFinish)
+            dispatch(targetIsDragged(true))
+
+        dispatch(isMousePressed(true))
     }
 
     const onMouseEnterHandler = () => {
-        if(mouseState == NOT_PRESSED)
+        if(!mouseState)
             return;
-        if(nodeDraggedType!==START && nodeDraggedType!==TARGET){
+        if(!isStartDragged && !isTargetDragged && nodeDraggedType!==START && nodeDraggedType!==TARGET){
             if(nodeDraggedType==WALL && node.isWall == false)
-                dispatch(toggleWallNode({row: node.row, col: node.col}))
+                dispatch(toggleWallNode(nodeCoords))
+        }
+
+        if(isStartDragged){
+            if(node.isFinish)
+                return
+            dispatch(setStartNode(nodeCoords))
+        }
+
+        if(isTargetDragged){
+            if(node.isStart)
+                return
+            dispatch(setTargetNode(nodeCoords))
         }
     }
-
-    const onMouseUpHandler = () => {
-        dispatch(mouseNotPressed())
-    }
-
 
     return (
         <div className = {`node ${nodeType}`} style={{width:`${SQUARE_SIZE}px`, height:`${SQUARE_SIZE}px`}}
             onMouseDown={onMouseDownHandler}
             onMouseEnter={onMouseEnterHandler}
-            onMouseUp={onMouseUpHandler}
             >
         </div>
     )
