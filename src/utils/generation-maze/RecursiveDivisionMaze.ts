@@ -1,5 +1,6 @@
 import { HORIZONTAL, VERTICAL } from "../../constants/algorithms"
 import { NodeCoords } from "../../redux-features/boardSlice"
+import { NodeInterface } from "../GridUtils"
 
 /**https://weblog.jamisbuck.org/2011/1/12/maze-generation-recursive-division-algorithm */
 const chooseOrientation = (width:number, height:number) => {
@@ -14,7 +15,7 @@ const getRandomNumber = (max: number) => {
     return Math.round(Math.random() * max);
 }
 
-const generateOuterWalls = (grid:any[][], width:number, height:number, queueToBeAnimated: NodeCoords[]) => {
+const generateOuterWalls = (grid:NodeInterface[][], width:number, height:number, queueToBeAnimated: NodeCoords[]) => {
         for(let i=0; i<height; i++){ // left and right border
             queueToBeAnimated.push({row: grid[i][0].row, col: grid[i][0].col})
             queueToBeAnimated.push({row: grid[i][width-1].row, col: grid[i][width-1].col})
@@ -26,14 +27,14 @@ const generateOuterWalls = (grid:any[][], width:number, height:number, queueToBe
         }
 }
 
-export const recursiveDivisionMaze = (grid:any[][], x:number, y:number, width:number, height:number, orientation: string) => {
+export const recursiveDivisionMaze = (grid:NodeInterface[][], x:number, y:number, width:number, height:number, orientation: string) => {
     let queueToBeAnimated: NodeCoords[] = []
     generateOuterWalls(grid, width, height, queueToBeAnimated)
     divide(grid, 1, 1, width-2, height-2, orientation, {row: -1, col: -1}, queueToBeAnimated)
     return queueToBeAnimated;
 }
 
-const divide = (grid:any[][], x:number, y:number, width:number, height:number, orientation: string, lastPassage:NodeCoords, queueToBeAnimated: NodeCoords[]) => {
+const divide = (grid:NodeInterface[][], x:number, y:number, width:number, height:number, orientation: string, lastPassage:NodeCoords, queueToBeAnimated: NodeCoords[]) => {
     if(width <= 2 || height <= 2)
         return;
 
