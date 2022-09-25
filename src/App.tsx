@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import './App.css';
 import Board from './components/board/Board';
 import Legend from './components/legend/Legend';
-import { isMousePressed, selectStart, selectTarget, startIsDragged, targetIsDragged } from './redux-features/boardSlice';
+import NavMenu from './components/nav-menu/Nav-menu';
+import { isMousePressed, startIsDragged, targetIsDragged } from './redux-features/boardSlice';
 import { useAppDispatch } from './redux-features/hooks';
 
 function App() {
@@ -20,6 +20,7 @@ function App() {
 
   return (
     <div className="App">
+      <NavMenu></NavMenu>
       <Legend></Legend>
       <Board></Board>
     </div>

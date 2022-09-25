@@ -43,15 +43,13 @@ export const boardSlice = createSlice({
   name: 'board',
   initialState,
   reducers: {
-    toggleWallNode: (state, action: PayloadAction<NodeCoords>) => {
+    setGrid: (state, action: PayloadAction<NodeInterface[][]>) => {
+      state.grid = action.payload
+    },
+    setWallNode: (state, action: PayloadAction<{row: number, col: number, isWall: boolean}>) => {
       const row = action.payload.row;
       const col = action.payload.col;
-      const oldNode = state.grid[row][col];
-      const newNode = {
-            ...oldNode,
-            isWall: !oldNode.isWall
-        };
-      state.grid[row][col] = newNode;
+      state.grid[row][col].isWall = action.payload.isWall;
     },
     setStartNode: (state, action:PayloadAction<NodeCoords>) => {
       const oldStartRow = state.startNode.row;
@@ -85,7 +83,7 @@ export const boardSlice = createSlice({
   }
 })
 
-export const { toggleWallNode, setStartNode, setTargetNode, isMousePressed, startIsDragged, targetIsDragged } = boardSlice.actions
+export const { setGrid, setWallNode, setStartNode, setTargetNode, isMousePressed, startIsDragged, targetIsDragged } = boardSlice.actions
 export const selectGrid = (state: RootState) => state.board.grid
 export const selectMouse = (state: RootState) => state.board.mouse
 export const selectStart = (state: RootState) => state.board.startDragged

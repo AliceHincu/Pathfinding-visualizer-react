@@ -1,8 +1,10 @@
 import { HEIGHT, SQUARE_SIZE, WIDTH } from "./dimensions";
 
  /** 3*squareSize = total margin of left + right  */
- export const ROW_COUNT = Math.floor((HEIGHT-3*SQUARE_SIZE)/SQUARE_SIZE);
- export const COLUMN_COUNT = Math.floor((WIDTH-3*SQUARE_SIZE)/SQUARE_SIZE);
+ const rowCount = Math.floor((HEIGHT-3*SQUARE_SIZE)/SQUARE_SIZE);
+ const colCount = Math.floor((WIDTH-3*SQUARE_SIZE)/SQUARE_SIZE);
+ export const ROW_COUNT = rowCount % 2 == 1 ? rowCount : rowCount -1;
+ export const COLUMN_COUNT = colCount % 2 == 1 ? colCount : colCount -1;
 
  /** coords of start and finish initial nodes */
  export const START_NODE_ROW = Math.floor(ROW_COUNT/2);

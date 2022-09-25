@@ -28,27 +28,6 @@ const Board = () => {
           }
         </div>
     )
-//     return (
-//         <div className="board" style={{gridTemplateColumns:`repeat(${COLUMN_COUNT}, ${SQUARE_SIZE}px)`, gridTemplateRows:`repeat(${ROW_COUNT}, ${SQUARE_SIZE}px)`}}>
-//         {
-//             grid.map( (row,i) => { return (
-//                 row.map((node,j) => {
-//                     return (<Node key = {`${i}+${j}`}  
-//                         onMouseDown = {handleMouseDown} 
-//                         onMouseEnter = {handleMouseEnter}
-//                         onMouseLeave = {handleMouseLeave}
-//                         onMouseUp  = {handleMouseUp}
-//                         isHeld = {isHeld}
-//                         nodeDraggedType = {nodeDraggedType}
-//                         nodeVal = {board[i][j]} 
-//                         row = {i} 
-//                         col = {j}>
-//                     </Node>)
-//             })  
-//             )     })
-//         }
-//       </div>
-//   )
 }
 
 export default Board

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { SQUARE_SIZE } from '../../constants/dimensions';
 import { NOT_PRESSED } from '../../constants/mouse';
 import { START, TARGET, UNVISITED, WALL } from '../../constants/node-types';
-import { isMousePressed, NodeCoords, selectMouse, selectStart, selectTarget, setStartNode, setTargetNode, startIsDragged, targetIsDragged, toggleWallNode } from '../../redux-features/boardSlice';
+import { isMousePressed, NodeCoords, selectMouse, selectStart, selectTarget, setStartNode, setTargetNode, startIsDragged, targetIsDragged, setWallNode } from '../../redux-features/boardSlice';
 import { useAppDispatch } from '../../redux-features/hooks';
 import { selectNodeType } from '../../redux-features/nodeSlice';
 import { NodeInterface } from '../../utils/GridUtils';
@@ -22,7 +22,7 @@ const Node = ({node}: NodeProps) => {
     const isTargetDragged = useSelector(selectTarget);
     const dispatch = useAppDispatch();
 
-    console.log(`The node (${node.row}, ${node.col}) was rendered`)
+    // console.log(`The node (${node.row}, ${node.col}) was rendered`)
 
     const getNodeType = (): string => {
         return  node.isFinish ? TARGET : 
@@ -34,8 +34,11 @@ const Node = ({node}: NodeProps) => {
 
     const onMouseDownHandler = () => {
         if(!node.isFinish && !node.isStart) {
+            console.log(nodeDraggedType)
             if(nodeDraggedType === WALL)
-                dispatch(toggleWallNode(nodeCoords))
+                dispatch(setWallNode({...nodeCoords, isWall: true}))
+            if(nodeDraggedType === UNVISITED)
+                dispatch(setWallNode({...nodeCoords, isWall: false}))
         }
 
         if(node.isStart)
@@ -51,7 +54,9 @@ const Node = ({node}: NodeProps) => {
             return;
         if(!isStartDragged && !isTargetDragged && nodeDraggedType!==START && nodeDraggedType!==TARGET){
             if(nodeDraggedType==WALL && node.isWall == false)
-                dispatch(toggleWallNode(nodeCoords))
+                dispatch(setWallNode({...nodeCoords, isWall: true}))
+            if(nodeDraggedType==UNVISITED && node.isWall == true)
+                dispatch(setWallNode({...nodeCoords, isWall: false}))
         }
 
         if(isStartDragged){
