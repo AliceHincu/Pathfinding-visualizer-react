@@ -1,5 +1,6 @@
+import { HORIZONTAL } from '../../constants/algorithms';
 import { COLUMN_COUNT, ROW_COUNT } from '../../constants/grid-details';
-import { selectGrid, setGrid } from '../../redux-features/boardSlice';
+import { NodeCoords, selectGrid, setNode } from '../../redux-features/boardSlice';
 import { useAppDispatch, useAppSelector } from '../../redux-features/hooks';
 import { recursiveDivisionMaze } from '../../utils/generation-maze/RecursiveDivisionMaze'
 import { generateInitalGrid } from '../../utils/GridUtils';
@@ -9,11 +10,21 @@ const NavMenu = () => {
     const grid = useAppSelector(selectGrid);
     const dispatch = useAppDispatch();
 
+    const animate = (queue: NodeCoords[]) => {
+        for(let i=0; i<queue.length; i++){
+            setTimeout(()=>{
+                const newNode = {
+                    ...grid[queue[i].row][queue[i].col],
+                    isWall: true
+                }
+                dispatch(setNode(newNode))
+            }, 10*i)
+        }
+    }
+
     const generateWalls = (generationAlgorithm: string) => {
-        const newGrid = recursiveDivisionMaze(generateInitalGrid(), 0, 0, COLUMN_COUNT, ROW_COUNT, "horizontal");
-        // const newGrid = generate(generateInitalGrid());
-        console.log(newGrid)
-        dispatch(setGrid(newGrid))
+        const queue = recursiveDivisionMaze(generateInitalGrid(), 0, 0, COLUMN_COUNT, ROW_COUNT, HORIZONTAL);
+        animate(queue)
     }
     
     return(

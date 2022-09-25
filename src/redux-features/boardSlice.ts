@@ -1,5 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { NOT_PRESSED, PRESSED } from '../constants/mouse'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { START_NODE_ROW, START_NODE_COL, FINISH_NODE_ROW, FINISH_NODE_COL } from '../constants/grid-details'
 import type {RootState} from '../store'
 import { generateInitalGrid, NodeInterface } from '../utils/GridUtils'
@@ -46,6 +45,10 @@ export const boardSlice = createSlice({
     setGrid: (state, action: PayloadAction<NodeInterface[][]>) => {
       state.grid = action.payload
     },
+    setNode: (state, action: PayloadAction<NodeInterface>) => {
+      let node = action.payload;
+      state.grid[node.row][node.col] = node;
+    },
     setWallNode: (state, action: PayloadAction<{row: number, col: number, isWall: boolean}>) => {
       const row = action.payload.row;
       const col = action.payload.col;
@@ -83,7 +86,7 @@ export const boardSlice = createSlice({
   }
 })
 
-export const { setGrid, setWallNode, setStartNode, setTargetNode, isMousePressed, startIsDragged, targetIsDragged } = boardSlice.actions
+export const { setNode, setGrid, setWallNode, setStartNode, setTargetNode, isMousePressed, startIsDragged, targetIsDragged } = boardSlice.actions
 export const selectGrid = (state: RootState) => state.board.grid
 export const selectMouse = (state: RootState) => state.board.mouse
 export const selectStart = (state: RootState) => state.board.startDragged

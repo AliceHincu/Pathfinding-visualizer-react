@@ -24,8 +24,6 @@
     outline: 1px solid rgba(95, 110, 143, 0.5);
     user-select: none;
     cursor: pointer;
-    /* transition: background-color 0.3s ease-out; */
-    
 
     animation-name: obstacleAnimation;
     animation-duration: 0.3s;
