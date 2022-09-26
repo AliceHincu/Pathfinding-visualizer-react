@@ -7,6 +7,7 @@ export interface NodeInterface {
     isFinish: boolean,
     distance: number,
     isVisited: boolean,
+    isPath: boolean,
     isWall: boolean,
 }
 
@@ -18,6 +19,7 @@ function NodeFactory(row: number, col: number) {
         isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
         distance: Infinity,
         isVisited: false,
+        isPath: false,
         isWall: false,
       };
 }

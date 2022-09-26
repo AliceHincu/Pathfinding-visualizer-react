@@ -5,11 +5,11 @@ import { generateInitalGrid, NodeInterface } from '../utils/GridUtils'
 
 interface BoardState {
   grid: NodeInterface[][],
-  startNode: {
+  startNodeCoords: {
     row: number,
     col: number
   },
-  targetNode: {
+  targetNodeCoords: {
     row: number,
     col: number
   },
@@ -20,11 +20,11 @@ interface BoardState {
 
 const initialState: BoardState = {
   grid: generateInitalGrid(),
-  startNode: {
+  startNodeCoords: {
     row: START_NODE_ROW,
     col: START_NODE_COL
   },
-  targetNode: {
+  targetNodeCoords: {
     row: FINISH_NODE_ROW,
     col: FINISH_NODE_COL
   },
@@ -55,19 +55,19 @@ export const boardSlice = createSlice({
       state.grid[row][col].isWall = action.payload.isWall;
     },
     setStartNode: (state, action:PayloadAction<NodeCoords>) => {
-      const oldStartRow = state.startNode.row;
-      const oldStartCol = state.startNode.col;
+      const oldStartRow = state.startNodeCoords.row;
+      const oldStartCol = state.startNodeCoords.col;
       const newStartRow = action.payload.row;
       const newStartCol = action.payload.col;
       
       state.grid[oldStartRow][oldStartCol].isStart = false;
       state.grid[newStartRow][newStartCol].isStart = true;
-      state.startNode.row = newStartRow;
-      state.startNode.col = newStartCol
+      state.startNodeCoords.row = newStartRow;
+      state.startNodeCoords.col = newStartCol
     },
     setTargetNode: (state, action:PayloadAction<NodeCoords>) => {
-      const oldTargetRow = state.targetNode.row;
-      const oldTargetCol = state.targetNode.col;
+      const oldTargetRow = state.targetNodeCoords.row;
+      const oldTargetCol = state.targetNodeCoords.col;
       const newTargetRow = action.payload.row;
       const newTargetCol = action.payload.col;
       
@@ -86,9 +86,11 @@ export const boardSlice = createSlice({
   }
 })
 
-export const { setNode, setGrid, setWallNode, setStartNode, setTargetNode, isMousePressed, startIsDragged, targetIsDragged } = boardSlice.actions
-export const selectGrid = (state: RootState) => state.board.grid
-export const selectMouse = (state: RootState) => state.board.mouse
-export const selectStart = (state: RootState) => state.board.startDragged
-export const selectTarget = (state: RootState) => state.board.targetDragged
+export const { setNode, setGrid, setWallNode, setStartNode, setTargetNode, isMousePressed, startIsDragged, targetIsDragged } = boardSlice.actions;
+export const selectGrid = (state: RootState) => state.board.grid;
+export const selectMouse = (state: RootState) => state.board.mouse;
+export const selectIsStartDragged = (state: RootState) => state.board.startDragged;
+export const selectIsTargetDragged = (state: RootState) => state.board.targetDragged;
+export const selectStartCoords = (state: RootState) => state.board.startNodeCoords;
+export const selectTargetCoords = (state: RootState) => state.board.targetNodeCoords;
 export default boardSlice.reducer

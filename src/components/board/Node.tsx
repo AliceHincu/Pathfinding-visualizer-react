@@ -1,13 +1,20 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { SQUARE_SIZE } from "../../constants/dimensions";
-import { START, TARGET, UNVISITED, WALL } from "../../constants/node-types";
+import {
+  START,
+  TARGET,
+  UNVISITED,
+  WALL,
+  VISITED,
+  PATH,
+} from "../../constants/node-types";
 import {
   isMousePressed,
   NodeCoords,
   selectMouse,
-  selectStart,
-  selectTarget,
+  selectIsStartDragged,
+  selectIsTargetDragged,
   setStartNode,
   setTargetNode,
   startIsDragged,
@@ -27,19 +34,23 @@ const Node = ({ node }: NodeProps) => {
   const nodeCoords: NodeCoords = { row: node.row, col: node.col };
   const nodeDraggedType = useSelector(selectNodeType);
   const mouseState = useSelector(selectMouse);
-  const isStartDragged = useSelector(selectStart);
-  const isTargetDragged = useSelector(selectTarget);
+  const isStartDragged = useSelector(selectIsStartDragged);
+  const isTargetDragged = useSelector(selectIsTargetDragged);
   const dispatch = useAppDispatch();
 
-//   console.log(`The node (${node.row}, ${node.col}) was rendered`)
+  //   console.log(`The node (${node.row}, ${node.col}) was rendered`)
 
   const getNodeType = (): string => {
     return node.isFinish
       ? TARGET
       : node.isStart
       ? START
+      : node.isPath
+      ? PATH
       : node.isWall
       ? WALL
+      : node.isVisited
+      ? VISITED
       : UNVISITED;
   };
 

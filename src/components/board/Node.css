@@ -9,6 +9,14 @@
     background-color: white; 
 }
 
+.visited-node {
+  background-color: cyan; 
+}
+
+.path-node {
+  background-color: blue;
+}
+
 .start-node{
     background-color: green;
     cursor: pointer;
