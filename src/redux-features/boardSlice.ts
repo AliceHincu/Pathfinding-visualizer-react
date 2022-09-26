@@ -46,8 +46,7 @@ export const boardSlice = createSlice({
       state.grid = action.payload
     },
     setNode: (state, action: PayloadAction<NodeInterface>) => {
-      let node = action.payload;
-      state.grid[node.row][node.col] = node;
+      state.grid[action.payload.row][action.payload.col] = {...action.payload};
     },
     setWallNode: (state, action: PayloadAction<{row: number, col: number, isWall: boolean}>) => {
       const row = action.payload.row;

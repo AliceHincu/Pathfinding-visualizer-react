@@ -40,6 +40,27 @@ export const generateInitalGrid = () => {
     return grid;
 }
 
+export const generateGridWithoutPath = (initialGrid: NodeInterface[][]) => {
+    const newGrid: NodeInterface[][] = []
+
+    for(let row = 0; row < ROW_COUNT; row++) {
+        const currentRow = [];
+
+        for(let col = 0; col < COLUMN_COUNT; col++) {
+            const node = {
+                ...initialGrid[row][col],
+                isVisited: false,
+                isPath: false
+            }
+            currentRow.push(node);
+        }
+
+        newGrid.push(currentRow);
+    }
+
+    return newGrid;
+}
+
 export const generateNodeKey = (row: number, col: number) => {
     return (row * ROW_COUNT + col).toString();
 }

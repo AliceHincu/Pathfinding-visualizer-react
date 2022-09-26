@@ -25,12 +25,12 @@ const isSolution = (node: number[], target: number[]) => {
     return node[0] === target[0] && node[1] == target[1]
 }
 
-const recreatePath = (visited:  Map<string, NodeCoords | null>, targetCoords: number[]) => {
+const recreatePath = (parentMap:  Map<string, NodeCoords | null>, targetCoords: number[]) => {
     let path = []
-    let current: NodeCoords|null|undefined = visited.get(targetCoords.toString());
+    let current: NodeCoords|null|undefined = parentMap.get(targetCoords.toString());
     while (current != null) {
         path.push(current);
-        current = visited.get([current.row, current.col].toString());
+        current = parentMap.get([current.row, current.col].toString());
     }
     return path.reverse()
 }
@@ -45,11 +45,11 @@ export const bfs = (grid: NodeInterface[][], startCoords: number[], targetCoords
     const queue: number[][] = [];
     const queueVisitedAnimated: NodeCoords[][] = []
     // Stores the node and the prev node
-    const visited = new Map<string, NodeCoords | null>();
+    const parentMap = new Map<string, NodeCoords | null>();
 
     // Mark the starting cell as visited and push it into the queue
     queue.push(startCoords);
-    visited.set(startCoords.toString(), null); // Mark source as visited
+    parentMap.set(startCoords.toString(), null); // Mark source as visited
 
     // Iterate while the queue is not empty and target is not reached
     let currentNode: number[];
@@ -64,8 +64,8 @@ export const bfs = (grid: NodeInterface[][], startCoords: number[], targetCoords
             const newNodeCoords: number[] = [currentNode[0] + direction.row[i], currentNode[1] + direction.col[i]]
 
             if (isSolution(newNodeCoords, targetCoords)) {
-                visited.set(targetCoords.toString(), {row:currentNode[0], col:currentNode[1]})
-                let path = recreatePath(visited, targetCoords);
+                parentMap.set(targetCoords.toString(), {row:currentNode[0], col:currentNode[1]})
+                let path = recreatePath(parentMap, targetCoords);
                 path = path.slice(1, path.length)
                 return {
                     path: path,
@@ -73,8 +73,8 @@ export const bfs = (grid: NodeInterface[][], startCoords: number[], targetCoords
                 }
             }
 
-            if (isValid(grid, visited, newNodeCoords)) {
-                visited.set(newNodeCoords.toString(), {row:currentNode[0], col:currentNode[1]})
+            if (isValid(grid, parentMap, newNodeCoords)) {
+                parentMap.set(newNodeCoords.toString(), {row:currentNode[0], col:currentNode[1]})
                 queue.push(newNodeCoords);
                 currentVisitedForQueue.push({row: newNodeCoords[0], col: newNodeCoords[1]})
             }

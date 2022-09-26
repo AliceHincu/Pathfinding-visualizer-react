@@ -11,7 +11,7 @@
 
 .visited-node {
   animation-name: visitedNodeAnimation;
-  animation-duration: 0.3s;
+  animation-duration: 0.6s;
   animation-timing-function: ease-out;
   animation-delay: 0;
   animation-iteration-count: 1;
@@ -20,24 +20,22 @@
 }
 
 .path-node {
-  background-color: blue;
-
   animation-name: pathNodeAnimation;
-    animation-duration: 0.3s;
-    animation-timing-function: ease-out;
-    animation-delay: 0;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards; 
-    animation-play-state: running;  
+  animation-duration: 0.3s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards; 
+  animation-play-state: running;  
 }
 
 .start-node{
-    background-color: green;
+    background-color: #2c9968;
     cursor: pointer;
 }
 
 .target-node {
-    background-color: red;
+    background-color: #ec1c38;
     cursor: pointer;
 }
   
@@ -79,27 +77,15 @@
     border-radius: 100%;
   }
 
-  /* 12% {
-    background-color: #ffd6a5;
-  } */
-
-  24% {
+  15% {
     background-color: #fdffb6;
   }
 
-  /* 36% {
-    background-color: #caffbf;
-  } */
-
-  48% {
+  30% {
     background-color: #9bf6ff;
   }
 
-  /* 60% {
-    background-color: #a0c4ff;
-  } */
-
-  75% {
+  85% {
     transform: scale(1.2);
     background-color: #bdb2ff;
   }
@@ -113,21 +99,21 @@
 @keyframes pathNodeAnimation {
   0% {
     transform: scale(.3);
-    background-color: #250744;
+    background-color: #150c4d;
     border-radius: 100%;
   }
 
   50% {
-    background-color: #8c1bab;
+    background-color: #2a4dc1;
   }
 
   75% {
     transform: scale(1.2);
-    background-color: #eb7195;
+    background-color: #5698e2;
   }
 
   100% {
     transform: scale(1.0);
-    background-color: #f6db72;
+    background-color: #9bf6ff;
   }
 }

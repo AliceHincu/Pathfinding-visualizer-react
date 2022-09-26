@@ -100,8 +100,8 @@ const Node = ({ node }: NodeProps) => {
     <div
       className={`node ${nodeType}`}
       style={{ width: `${SQUARE_SIZE}px`, height: `${SQUARE_SIZE}px` }}
-      // onMouseDown={onMouseDownHandler}
-      // onMouseEnter={onMouseEnterHandler}
+      onMouseDown={onMouseDownHandler}
+      onMouseEnter={onMouseEnterHandler}
     ></div>
   );
 };
