@@ -38,7 +38,7 @@ const Node = ({ node }: NodeProps) => {
   const isTargetDragged = useSelector(selectIsTargetDragged);
   const dispatch = useAppDispatch();
 
-  //   console.log(`The node (${node.row}, ${node.col}) was rendered`)
+  // console.log(`The node (${node.row}, ${node.col}) was rendered`)
 
   const getNodeType = (): string => {
     return node.isFinish
@@ -100,8 +100,8 @@ const Node = ({ node }: NodeProps) => {
     <div
       className={`node ${nodeType}`}
       style={{ width: `${SQUARE_SIZE}px`, height: `${SQUARE_SIZE}px` }}
-      onMouseDown={onMouseDownHandler}
-      onMouseEnter={onMouseEnterHandler}
+      // onMouseDown={onMouseDownHandler}
+      // onMouseEnter={onMouseEnterHandler}
     ></div>
   );
 };

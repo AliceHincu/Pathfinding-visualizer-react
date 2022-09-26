@@ -63,19 +63,20 @@ export const bfs = (grid: NodeInterface[][], startCoords: number[], targetCoords
         for (var i = 0; i < 4; i++) {
             const newNodeCoords: number[] = [currentNode[0] + direction.row[i], currentNode[1] + direction.col[i]]
 
-            if (isValid(grid, visited, newNodeCoords)) {
-                visited.set(newNodeCoords.toString(), {row:currentNode[0], col:currentNode[1]})
-                queue.push(newNodeCoords);
-                currentVisitedForQueue.push({row: newNodeCoords[0], col: newNodeCoords[1]})
-            }
-
             if (isSolution(newNodeCoords, targetCoords)) {
+                visited.set(targetCoords.toString(), {row:currentNode[0], col:currentNode[1]})
                 let path = recreatePath(visited, targetCoords);
                 path = path.slice(1, path.length)
                 return {
                     path: path,
                     queueVisitedAnimated: queueVisitedAnimated
                 }
+            }
+
+            if (isValid(grid, visited, newNodeCoords)) {
+                visited.set(newNodeCoords.toString(), {row:currentNode[0], col:currentNode[1]})
+                queue.push(newNodeCoords);
+                currentVisitedForQueue.push({row: newNodeCoords[0], col: newNodeCoords[1]})
             }
         }
 

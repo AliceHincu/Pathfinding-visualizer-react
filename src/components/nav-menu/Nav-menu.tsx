@@ -1,5 +1,7 @@
-import { clear } from "console";
 import {
+  ANIMATION_MAZE_TIME,
+  ANIMATION_PATH_NODE_TIME,
+  ANIMATION_VISITED_NODE_TIME,
   A_STAR,
   BFS,
   DFS,
@@ -30,6 +32,20 @@ const NavMenu = () => {
   const startCoords = useAppSelector(selectStartCoords);
   const targetCoords = useAppSelector(selectTargetCoords);
   const dispatch = useAppDispatch();
+  
+  const undoWallsStartTarget = () => {
+    //Make isWall prop false for start and target once the algorithm started
+    const newStartNode = {
+      ...grid[startCoords.row][startCoords.col],
+      isWall: false
+    }
+    const newTargetNode = {
+      ...grid[targetCoords.row][targetCoords.col],
+      isWall: false
+    }
+    dispatch(setNode(newStartNode))
+    dispatch(setNode(newTargetNode))
+  }
 
   const clearPath = () => {};
 
@@ -37,55 +53,58 @@ const NavMenu = () => {
     dispatch(setGrid(generateInitalGrid()));
   };
 
-  const isStart = (row: number, col: number) => {
-    return row === startCoords.row && col === startCoords.col
-  }
-
-  const isTarget = (row: number, col: number) => {
-    return row == targetCoords.row && col === targetCoords.col
-  }
-
   const animateMaze = (queue: NodeCoords[]) => {
-    for (let i = 0; i < queue.length; i++) {
-      setTimeout(() => {
-        let row = queue[i].row;
-        let col = queue[i].col;
-        const newNode = {
-          ...grid[row][col],
-          isWall: (isStart(row, col) || isTarget(row, col)) ? false : true,
-        };
-        dispatch(setNode(newNode));
-      }, 10 * i);
-    }
+    let i=0;
+
+    let interval = setInterval(() => { //setInterval because setTimeout causes lag.
+      const newNode = {
+        ...grid[queue[i].row][queue[i].col],
+        isWall: true,
+      };
+      dispatch(setNode(newNode));
+
+      if(i==queue.length-1){
+        clearInterval(interval)
+      }
+      i++;
+    }, ANIMATION_MAZE_TIME)
   };
 
   const animatePath = (path: NodeCoords[]) => {
-    for (let i = 0; i < path.length; i++) {
-      setTimeout(() => {
-        const newNode = {
-          ...grid[path[i].row][path[i].col],
-          isPath: true,
-        };
-        dispatch(setNode(newNode));
-      }, 10 * i);
-    }
+    let i=0;
+    let interval = setInterval(() => { //setInterval because setTimeout causes lag.
+      const newNode = {
+        ...grid[path[i].row][path[i].col],
+        isPath: true,
+      };
+      dispatch(setNode(newNode));
+
+      if(i==path.length-1){
+        clearInterval(interval)
+      }
+
+      i++;
+    }, ANIMATION_PATH_NODE_TIME)
   };
 
   const animateVisitedNodes = (queue: NodeCoords[][], path: NodeCoords[]) => {
-    for (let i = 0; i < queue.length; i++) {
-      setTimeout(() => {
-        for(let j=0; j<queue[i].length;j++){
-            const newNode = {
-            ...grid[queue[i][j].row][queue[i][j].col],
-            isVisited: true,
-            };
-            dispatch(setNode(newNode));
-        }
-        if(i==queue.length-1){
-            animatePath(path)
-        }
-      }, 30 * i);
-    }
+    let i=0;
+    let interval = setInterval(() => { //setInterval because setTimeout causes lag.
+      for(let j=0; j<queue[i].length;j++){
+        const newNode = {
+          ...grid[queue[i][j].row][queue[i][j].col],
+          isVisited: true,
+        };
+        dispatch(setNode(newNode));
+      }
+
+      if(i==queue.length-1){
+        clearInterval(interval)
+        animatePath(path)
+      }
+
+      i++;
+    }, ANIMATION_VISITED_NODE_TIME)
   };
 
   const generateWalls = (generationAlgorithm: string) => {
@@ -105,11 +124,10 @@ const NavMenu = () => {
   };
 
   const runAlgorithm = (pathfindingAlgorithm: string) => {
+    undoWallsStartTarget();
     switch (pathfindingAlgorithm) {
       case BFS:
         const sol: SolutionBFS = bfs(grid, [startCoords.row, startCoords.col], [targetCoords.row, targetCoords.col]);
-        // console.log(sol.path)
-        // animatePath(sol.path)
         animateVisitedNodes(sol.queueVisitedAnimated, sol.path);
     }
   };
