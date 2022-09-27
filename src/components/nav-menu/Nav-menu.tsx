@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from "../../redux-features/hooks";
 import { randomMaze } from "../../utils/generation-maze/RandomMaze";
 import { recursiveDivisionMaze } from "../../utils/generation-maze/RecursiveDivisionMaze";
 import { generateGridWithoutPath, generateInitalGrid, NodeInterface } from "../../utils/GridUtils";
+import ASTAR_Algo, { SolutionASTAR } from "../../utils/pathfinding-algorithms/aStar";
 import { bfs, SolutionBFS } from "../../utils/pathfinding-algorithms/bfs";
 import DFS_Algo, { SolutionDFS } from "../../utils/pathfinding-algorithms/dfs";
 import { Dropdown } from "./Dropdown";
@@ -68,8 +69,6 @@ const NavMenu = () => {
       dispatch(setGrid(generateGridWithoutPath(grid)));
       setIsVisualizationFinished(true);
     }
-    // if (!isVisualizationFinished)
-    //   setIsVisualizationFinished(true);
 
   };
 
@@ -78,8 +77,6 @@ const NavMenu = () => {
       dispatch(setGrid(generateInitalGrid(startCoords, targetCoords)));
       setIsVisualizationFinished(true);
     }
-    // if (!isVisualizationFinished)
-    //   setIsVisualizationFinished(true);
   };
 
   const animateMaze = (queue: NodeCoords[]) => {
@@ -195,13 +192,14 @@ const NavMenu = () => {
         break;
       case DFS:
         const solDfs: SolutionDFS | undefined = new DFS_Algo(grid, [startCoords.row, startCoords.col], [targetCoords.row, targetCoords.col]).run();
-        console.log(solDfs);
         animateVisitedNodes1D(solDfs.queueVisitedAnimated, solDfs.path)
+        break;
+      case A_STAR:
+        const solAstar: SolutionASTAR = new ASTAR_Algo(grid, grid[startCoords.row][startCoords.col], grid[targetCoords.row][targetCoords.col]).run();
+        animateVisitedNodes1D(solAstar.queueVisitedAnimated, solAstar.path)
         break;
     }
   };
-
-  console.log(isAnimationInProgress, isVisualizationFinished)
 
   return (
     <div className="nav-bar">
