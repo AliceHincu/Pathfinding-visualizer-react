@@ -191,7 +191,8 @@ const NavMenu = () => {
         animateVisitedNodes2D(solBsf.queueVisitedAnimated, solBsf.path);
         break;
       case DFS:
-        const solDfs: SolutionDFS | undefined = new DFS_Algo(grid, [startCoords.row, startCoords.col], [targetCoords.row, targetCoords.col]).run();
+        // const solDfs: SolutionDFS | undefined = new DFS_Algo(grid, [startCoords.row, startCoords.col], [targetCoords.row, targetCoords.col]).run();
+        const solDfs: SolutionDFS | undefined = new DFS_Algo(grid, grid[startCoords.row][startCoords.col], grid[targetCoords.row][targetCoords.col]).run();
         animateVisitedNodes1D(solDfs.queueVisitedAnimated, solDfs.path)
         break;
       case A_STAR:

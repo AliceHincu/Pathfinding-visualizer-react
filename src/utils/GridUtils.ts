@@ -82,12 +82,44 @@ export const generateNodeKey = (row: number, col: number): string => {
     return (row * ROW_COUNT + col).toString();
 }
 
+/** ----------- FOR ALGORITHMS -------------- */
 export const deepCopyGrid = (grid: NodeInterface[][]): NodeInterface[][] => {
     return grid.map(function (arr) {
         return arr.slice();
     });
 }
 
-export const getMapKey = (node: NodeInterface|NodeCoords): string => {
+export const getMapKey = (node: NodeInterface | NodeCoords): string => {
     return [node.row, node.col].toString();
+}
+
+export const isSolution = (node: NodeInterface | NodeCoords, target: NodeInterface | NodeCoords): boolean => {
+    return node.row === target.row && node.col == target.col
+}
+
+export const isValid = (nodeCoords: NodeCoords, parentMap: Map<string, NodeCoords | null>, grid: NodeInterface[][]): boolean => {
+    // If cell lies out of bounds
+    if (nodeCoords.row < 0 || nodeCoords.col < 0 || nodeCoords.row >= ROW_COUNT || nodeCoords.col >= COLUMN_COUNT)
+        return false;
+
+    // If cell is already visited or is a wall
+    if (parentMap.has(getMapKey(nodeCoords)) || grid[nodeCoords.row][nodeCoords.col].isWall)
+        return false;
+
+    // Otherwise
+    return true;
+}
+
+export const addToParentMap = (parentMap: Map<string, NodeCoords | null>, childCoords: NodeCoords, parentCoords: NodeCoords | null) => {
+    parentMap.set(getMapKey(childCoords), parentCoords)
+}
+
+export const recreatePath = (parentMap: Map<string, NodeCoords | null>, targetCoords: NodeCoords): NodeCoords[] => {
+    const path: NodeCoords[] = []
+    let current: NodeCoords | null | undefined = parentMap.get(getMapKey(targetCoords));
+    while (current != null) {
+        path.push(current);
+        current = parentMap.get([current.row, current.col].toString());
+    }
+    return path.reverse()
 }

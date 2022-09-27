@@ -1,11 +1,5 @@
-import { ROW_COUNT, COLUMN_COUNT } from "../../constants/grid-details";
 import { NodeCoords } from "../../redux-features/boardSlice";
-import { NodeInterface } from "../GridUtils";
-
-const direction = {
-    row: [-1, 0, 1, 0],
-    col: [0, 1, 0, -1]
-}
+import { addToParentMap, direction, getMapKey, isSolution, isValid, NodeInterface, recreatePath } from "../GridUtils";
 
 export interface SolutionDFS{
     path: NodeCoords[],
@@ -14,17 +8,17 @@ export interface SolutionDFS{
 
 export default class DFS_Algo {
     grid: NodeInterface[][];
-    startCoords: number[];
-    targetCoords: number[];
+    start: NodeCoords;
+    target: NodeCoords;
     stack: number[][];
     queueVisitedAnimated: NodeCoords[];
     parentMap: Map<string, NodeCoords | null>;
     solutionFound: boolean;
 
-    constructor(grid: NodeInterface[][], startCoords: number[], targetCoords: number[]){
+    constructor(grid: NodeInterface[][], startCoords: NodeCoords, targetCoords: NodeCoords){
         this.grid = grid;
-        this.startCoords = startCoords;
-        this.targetCoords = targetCoords;
+        this.start = startCoords;
+        this.target = targetCoords;
         this.stack = [];
         this.queueVisitedAnimated = [];
         this.parentMap = new Map<string, NodeCoords | null>();
@@ -32,7 +26,7 @@ export default class DFS_Algo {
     }
 
     run(): SolutionDFS {
-        const resultPath = this.dfsUtil(this.startCoords, null);
+        const resultPath = this.dfsUtil(this.start, null);
         const result: SolutionDFS = {
             path: resultPath == undefined ? [] : resultPath,
             queueVisitedAnimated: this.queueVisitedAnimated.slice(1, this.queueVisitedAnimated.length)
@@ -40,66 +34,33 @@ export default class DFS_Algo {
         return result;
     }
 
-    dfsUtil(currentNode: number[], parent:NodeCoords|null): NodeCoords[]|undefined {
+    dfsUtil(currentNode: NodeCoords, parent:NodeCoords|null): NodeCoords[]|undefined {
         if(this.solutionFound)
             return;
             
-        if (this.isSolution(currentNode)) {
-            this.parentMap.set(currentNode.toString(), parent)
-            let path = this.recreatePath();
+        if (isSolution(currentNode, this.target)) {
+            addToParentMap(this.parentMap, currentNode, parent)
+            let path = recreatePath(this.parentMap, this.target);
             this.solutionFound = true;
             return path;
         }
              
-        if(!this.isValid(currentNode))
+        if(!isValid(currentNode, this.parentMap, this.grid))
             return;
         
         // Mark the node as visited
-        this.parentMap.set(currentNode.toString(), parent)
-    
-        if (this.isSolution(currentNode)) {
-            let path = this.recreatePath();
-            this.solutionFound = true;
-            return path;
-        }
-         
-        this.queueVisitedAnimated.push({row: currentNode[0], col: currentNode[1]})
+        addToParentMap(this.parentMap, currentNode, parent)       
+        this.queueVisitedAnimated.push(currentNode)
 
         // Push all the adjacent cells
         for (var i = 0; i < 4; i++) {
-            const newNodeCoords: number[] = [currentNode[0] + direction.row[i], currentNode[1] + direction.col[i]]
-            let result = this.dfsUtil(newNodeCoords, {row: currentNode[0], col: currentNode[1]})
+            const newNodeCoords: NodeCoords = {
+                row: currentNode.row + direction.row[i], 
+                col: currentNode.col + direction.col[i]
+            }
+            let result = this.dfsUtil(newNodeCoords, currentNode)
             if(result != null)
                 return result;
         }
-
-    }
-
-    // Function to check if a cell can be visited or not
-    isValid(nodeCoords: number[]): boolean {
-        // If cell lies out of bounds
-        if (nodeCoords[0] < 0 || nodeCoords[1] < 0 || nodeCoords[0] >= ROW_COUNT || nodeCoords[1] >= COLUMN_COUNT)
-            return false;
-
-        // If cell is already visited or is a wall
-        if (this.parentMap.has(nodeCoords.toString()) || this.grid[nodeCoords[0]][nodeCoords[1]].isWall)
-            return false;
-
-        // Otherwise
-        return true;
-    }
-
-    isSolution(node: number[]): boolean {
-        return node[0] === this.targetCoords[0] && node[1] == this.targetCoords[1]
-    }
-
-    recreatePath(): NodeCoords[] {
-        let path: NodeCoords[] = []
-        let current: NodeCoords|null|undefined = this.parentMap.get(this.targetCoords.toString());
-        while (current != null) {
-            path.push(current);
-            current = this.parentMap.get([current.row, current.col].toString());
-        }
-        return path.reverse()
     }
 }
