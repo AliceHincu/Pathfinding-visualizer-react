@@ -84,7 +84,7 @@ const divide = (grid:NodeInterface[][], x:number, y:number, width:number, height
     const length = horizontal ? width : height
 
     for(let i=0; i<length; i++){
-        if(startWall.row !== passage.row || startWall.col !== passage.col){
+        if((startWall.row !== passage.row || startWall.col !== passage.col)){
             queueToBeAnimated.push({row: startWall.row, col: startWall.col})
         }
         startWall.row += direction.row

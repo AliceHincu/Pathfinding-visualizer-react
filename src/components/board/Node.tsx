@@ -58,7 +58,6 @@ const Node = ({ node }: NodeProps) => {
 
   const onMouseDownHandler = () => {
     if (!node.isFinish && !node.isStart) {
-      console.log(nodeDraggedType);
       if (nodeDraggedType === WALL)
         dispatch(setWallNode({ ...nodeCoords, isWall: true }));
       if (nodeDraggedType === UNVISITED)
@@ -79,7 +78,7 @@ const Node = ({ node }: NodeProps) => {
       nodeDraggedType !== START &&
       nodeDraggedType !== TARGET
     ) {
-      if (nodeDraggedType === WALL && node.isWall === false)
+      if (nodeDraggedType === WALL && node.isWall === false && node.isStart === false && node.isFinish === false)
         dispatch(setWallNode({ ...nodeCoords, isWall: true }));
       if (nodeDraggedType === UNVISITED && node.isWall === true)
         dispatch(setWallNode({ ...nodeCoords, isWall: false }));

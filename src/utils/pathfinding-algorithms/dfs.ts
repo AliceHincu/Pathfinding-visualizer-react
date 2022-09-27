@@ -28,7 +28,6 @@ export default class DFS_Algo {
         this.stack = [];
         this.queueVisitedAnimated = [];
         this.parentMap = new Map<string, NodeCoords | null>();
-        // this.parentMap.set(startCoords.toString(), null);
         this.solutionFound = false;
     }
 
@@ -36,7 +35,7 @@ export default class DFS_Algo {
         const resultPath = this.dfsUtil(this.startCoords, null);
         const result: SolutionDFS = {
             path: resultPath == undefined ? [] : resultPath,
-            queueVisitedAnimated: this.queueVisitedAnimated
+            queueVisitedAnimated: this.queueVisitedAnimated.slice(1, this.queueVisitedAnimated.length)
         }
         return result;
     }
@@ -44,6 +43,14 @@ export default class DFS_Algo {
     dfsUtil(currentNode: number[], parent:NodeCoords|null): NodeCoords[]|undefined {
         if(this.solutionFound)
             return;
+            
+        if (this.isSolution(currentNode)) {
+            this.parentMap.set(currentNode.toString(), parent)
+            let path = this.recreatePath();
+            this.solutionFound = true;
+            return path;
+        }
+             
         if(!this.isValid(currentNode))
             return;
         

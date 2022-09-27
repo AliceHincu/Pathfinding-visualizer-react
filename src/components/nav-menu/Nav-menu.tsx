@@ -28,6 +28,7 @@ import { recursiveDivisionMaze } from "../../utils/generation-maze/RecursiveDivi
 import { generateGridWithoutPath, generateInitalGrid, NodeInterface } from "../../utils/GridUtils";
 import { bfs, SolutionBFS } from "../../utils/pathfinding-algorithms/bfs";
 import DFS_Algo, { SolutionDFS } from "../../utils/pathfinding-algorithms/dfs";
+import { Dropdown } from "./Dropdown";
 // import { DFS, SolutionDFS } from "../../utils/pathfinding-algorithms/dfs";
 import "./Nav-menu.css";
 
@@ -37,7 +38,9 @@ const NavMenu = () => {
   const targetCoords = useAppSelector(selectTargetCoords);
   const dispatch = useAppDispatch();
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('');
-  
+  const [isAnimationInProgress, setIsAnimationInProgress] = useState(false);
+  const [isVisualizationFinished, setIsVisualizationFinished] = useState(true);
+
   const undoWallsStartTarget = () => {
     //Make isWall prop false for start and target once the algorithm started
     const newStartNode = {
@@ -54,26 +57,33 @@ const NavMenu = () => {
     dispatch(setWallNode(newTargetNode))
   }
 
-  // useEffect(() => {
-  //   console.log(grid)
-  // }, [grid])
-  
-
   const updateSelectedAlgorithm = (algorithm: string) => {
     setSelectedAlgorithm(algorithm)
+    clearPath()
     undoWallsStartTarget();
   }
 
   const clearPath = () => {
-    dispatch(setGrid(generateGridWithoutPath(grid)));
+    if (!isAnimationInProgress) {
+      dispatch(setGrid(generateGridWithoutPath(grid)));
+      setIsVisualizationFinished(true);
+    }
+    // if (!isVisualizationFinished)
+    //   setIsVisualizationFinished(true);
+
   };
 
   const clearBoard = () => {
-    dispatch(setGrid(generateInitalGrid()));
+    if (!isAnimationInProgress) {
+      dispatch(setGrid(generateInitalGrid(startCoords, targetCoords)));
+      setIsVisualizationFinished(true);
+    }
+    // if (!isVisualizationFinished)
+    //   setIsVisualizationFinished(true);
   };
 
   const animateMaze = (queue: NodeCoords[]) => {
-    let i=0;
+    let i = 0;
 
     let interval = setInterval(() => { //setInterval because setTimeout causes lag.
       const newNode = {
@@ -82,15 +92,17 @@ const NavMenu = () => {
       };
       dispatch(setNode(newNode));
 
-      if(i==queue.length-1){
+      if (i == queue.length - 1) {
+        undoWallsStartTarget()
         clearInterval(interval)
+        setIsAnimationInProgress(false)
       }
       i++;
     }, ANIMATION_MAZE_TIME)
   };
 
   const animatePath = (path: NodeCoords[]) => {
-    let i=0;
+    let i = 0;
     let interval = setInterval(() => {
       const newNode = {
         ...grid[path[i].row][path[i].col],
@@ -98,8 +110,9 @@ const NavMenu = () => {
       };
       dispatch(setNode(newNode));
 
-      if(i==path.length-1){
+      if (i == path.length - 1) {
         clearInterval(interval)
+        setIsAnimationInProgress(false);
       }
 
       i++;
@@ -107,9 +120,14 @@ const NavMenu = () => {
   };
 
   const animateVisitedNodes2D = (queue: NodeCoords[][], path: NodeCoords[]) => {
-    let i=0;
+    let i = 0;
+    if (queue.length === 0) {
+      setIsAnimationInProgress(false);
+      return;
+    }
+
     let interval = setInterval(() => {
-      for(let j=0; j<queue[i].length;j++){
+      for (let j = 0; j < queue[i].length; j++) {
         const newNode = {
           ...grid[queue[i][j].row][queue[i][j].col],
           isVisited: true,
@@ -117,7 +135,7 @@ const NavMenu = () => {
         dispatch(setNode(newNode));
       }
 
-      if(i==queue.length-1){
+      if (i == queue.length - 1) {
         clearInterval(interval)
         animatePath(path)
       }
@@ -127,7 +145,12 @@ const NavMenu = () => {
   };
 
   const animateVisitedNodes1D = (stack: NodeCoords[], path: NodeCoords[]) => {
-    let i=0;
+    let i = 0;
+    if (stack.length === 0) {
+      setIsAnimationInProgress(false);
+      return;
+    }
+
     let interval = setInterval(() => { //setInterval because setTimeout causes lag.
       const newNode = {
         ...grid[stack[i].row][stack[i].col],
@@ -135,14 +158,14 @@ const NavMenu = () => {
       };
 
       dispatch(setNode(newNode));
-      
-      if(i==stack.length-1){
+
+      if (i == stack.length - 1) {
         clearInterval(interval)
         animatePath(path)
       }
 
       i++;
-    }, ANIMATION_VISITED_NODE_TIME*2)
+    }, ANIMATION_VISITED_NODE_TIME * 2)
   };
 
   const generateWalls = (generationAlgorithm: string) => {
@@ -158,69 +181,54 @@ const NavMenu = () => {
         queue = randomMaze(grid, 0.3);
     }
 
+    setIsAnimationInProgress(true)
     animateMaze(queue);
   };
 
   const runAlgorithm = () => {
+    setIsAnimationInProgress(true);
+    setIsVisualizationFinished(false);
     switch (selectedAlgorithm) {
       case BFS:
         const solBsf: SolutionBFS = bfs(grid, [startCoords.row, startCoords.col], [targetCoords.row, targetCoords.col]);
         animateVisitedNodes2D(solBsf.queueVisitedAnimated, solBsf.path);
         break;
       case DFS:
-        const solDfs:SolutionDFS|undefined = new DFS_Algo(grid, [startCoords.row, startCoords.col], [targetCoords.row, targetCoords.col]).run();
+        const solDfs: SolutionDFS | undefined = new DFS_Algo(grid, [startCoords.row, startCoords.col], [targetCoords.row, targetCoords.col]).run();
         console.log(solDfs);
         animateVisitedNodes1D(solDfs.queueVisitedAnimated, solDfs.path)
         break;
     }
   };
 
+  console.log(isAnimationInProgress, isVisualizationFinished)
+
   return (
     <div className="nav-bar">
-      <div className="nav-bar-item">Pathfinding visualizer</div>
+      <Dropdown
+        title={"Generate maze"}
+        isAnimationInProgress={isAnimationInProgress}
+        isVisualizationFinished={isVisualizationFinished}
+        options={[RECURSIVE_DIVISON, RANDOM]}
+        callSetOptionMethod={generateWalls}
+      ></Dropdown>
+      <Dropdown
+        title={"Generate algorithm"}
+        isAnimationInProgress={isAnimationInProgress}
+        isVisualizationFinished={isVisualizationFinished}
+        options={[BFS, DFS, GREEDY_BFS, DIJKSTRA, A_STAR]}
+        callSetOptionMethod={updateSelectedAlgorithm}
+      ></Dropdown>
 
-      <div className="dropdown">
-        <button className="dropbtn">
-          Generate grid
-          <i
-            className="fa fa-caret-down"
-            style={{ margin: `0 0 0 0.5rem` }}
-          ></i>
-        </button>
-        <div className="dropdown-content">
-          <div onClick={() => generateWalls(RECURSIVE_DIVISON)}>
-            {RECURSIVE_DIVISON}
-          </div>
-          <div onClick={() => generateWalls(RANDOM)}>{RANDOM}</div>
-        </div>
-      </div>
-
-      <div className="dropdown">
-        <button className="dropbtn">
-          Generate algorithm
-          <i
-            className="fa fa-caret-down"
-            style={{ margin: `0 0 0 0.5rem` }}
-          ></i>
-        </button>
-        <div className="dropdown-content">
-          <div onClick={() => updateSelectedAlgorithm(DFS)}>{DFS}</div>
-          <div onClick={() => updateSelectedAlgorithm(BFS)}>{BFS}</div>
-          <div onClick={() => updateSelectedAlgorithm(GREEDY_BFS)}>{GREEDY_BFS}</div>
-          <div onClick={() => updateSelectedAlgorithm(DIJKSTRA)}>{DIJKSTRA}</div>
-          <div onClick={() => updateSelectedAlgorithm(A_STAR)}>{A_STAR}</div>
-        </div>
-      </div>
-
-      <div className="visualize-btn" onClick={() => runAlgorithm()}>
-        Visualize!
+      <div className="nav-bar-item" >
+        <button disabled={(isAnimationInProgress || !isVisualizationFinished)} className="visualize-btn" onClick={() => runAlgorithm()}> Visualize {selectedAlgorithm}! </button>
       </div>
 
       <div className="nav-bar-item" onClick={clearPath}>
-        Clear path
+        <p>Clear path</p>
       </div>
       <div className="nav-bar-item" onClick={clearBoard}>
-        Clear board
+        <p>Clear board</p>
       </div>
     </div>
   );

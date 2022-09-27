@@ -19,7 +19,7 @@ interface BoardState {
 }
 
 const initialState: BoardState = {
-  grid: generateInitalGrid(),
+  grid: generateInitalGrid({row: START_NODE_ROW, col: START_NODE_COL}, {row: FINISH_NODE_ROW, col: FINISH_NODE_COL}),
   startNodeCoords: {
     row: START_NODE_ROW,
     col: START_NODE_COL
@@ -71,7 +71,9 @@ export const boardSlice = createSlice({
       const newTargetCol = action.payload.col;
       
       state.grid[oldTargetRow][oldTargetCol].isFinish = false;
-      state.grid[newTargetRow][newTargetCol].isFinish = true;
+      state.grid[newTargetRow][newTargetCol].isFinish = true;      
+      state.targetNodeCoords.row = newTargetRow;
+      state.targetNodeCoords.col = newTargetCol
     },
     isMousePressed: (state, action: PayloadAction<boolean>) => {
       state.mouse = action.payload

@@ -1,4 +1,5 @@
 import { COLUMN_COUNT, FINISH_NODE_COL, FINISH_NODE_ROW, ROW_COUNT, START_NODE_COL, START_NODE_ROW } from "../constants/grid-details";
+import { NodeCoords } from "../redux-features/boardSlice";
 
 export interface NodeInterface {
     row: number,
@@ -11,12 +12,15 @@ export interface NodeInterface {
     isWall: boolean,
 }
 
+let start: NodeCoords;
+let target: NodeCoords;
+
 function NodeFactory(row: number, col: number) {
     return {
         row,
         col,
-        isStart: row === START_NODE_ROW && col === START_NODE_COL,
-        isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+        isStart: row === start.row && col === start.col,
+        isFinish: row === target.row && col === target.col,
         distance: Infinity,
         isVisited: false,
         isPath: false,
@@ -24,8 +28,10 @@ function NodeFactory(row: number, col: number) {
       };
 }
 
-export const generateInitalGrid = () => {
+export const generateInitalGrid = (startCoords: NodeCoords, targetCoords: NodeCoords) => {
     const grid = [];
+    start = startCoords;
+    target = targetCoords;
 
     for(let row = 0; row < ROW_COUNT; row++) {
         const currentRow = [];
@@ -40,8 +46,8 @@ export const generateInitalGrid = () => {
     return grid;
 }
 
-export const generateGridWithoutPath = (initialGrid: NodeInterface[][]) => {
-    const newGrid: NodeInterface[][] = []
+export const generateGridWithoutPath = (initialGrid: NodeInterface[][]): NodeInterface[][] => {
+    let newGrid: NodeInterface[][] = []
 
     for(let row = 0; row < ROW_COUNT; row++) {
         const currentRow = [];
