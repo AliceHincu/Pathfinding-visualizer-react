@@ -11,6 +11,7 @@ import {
   RANDOM,
   RECURSIVE_DIVISON,
 } from "../../constants/algorithms";
+import { NAV_MENU_HEIGHT } from "../../constants/dimensions";
 import { COLUMN_COUNT, ROW_COUNT } from "../../constants/grid-details";
 import {
   NodeCoords,
@@ -19,7 +20,6 @@ import {
   selectTargetCoords,
   setGrid,
   setNode,
-  setWallNode,
 } from "../../redux-features/boardSlice";
 import { useAppDispatch, useAppSelector } from "../../redux-features/hooks";
 import { randomMaze } from "../../utils/generation-maze/RandomMaze";
@@ -30,8 +30,10 @@ import BFS_Algo from "../../utils/pathfinding-algorithms/bfs";
 import DFS_Algo from "../../utils/pathfinding-algorithms/dfs";
 import GREEDY_Algo from "../../utils/pathfinding-algorithms/greedy";
 import { IAlgorithm, SolutionAlgo } from "../../utils/pathfinding-algorithms/IAlgorithm";
+import { ClearButton } from "./ClearButton";
 import { Dropdown } from "./Dropdown";
 import "./Nav-menu.css";
+import { VisualizeButton } from "./VisualizeButton";
 
 const NavMenu = () => {
   const grid = useAppSelector(selectGrid);
@@ -42,24 +44,14 @@ const NavMenu = () => {
   const [isAnimationInProgress, setIsAnimationInProgress] = useState(false);
   const [isVisualizationFinished, setIsVisualizationFinished] = useState(true);
 
-  const updateSelectedAlgorithm = (algorithm: string) => {
-    setSelectedAlgorithm(algorithm)
-    clearPath()
-  }
-
   const clearPath = () => {
-    if (!isAnimationInProgress) {
-      dispatch(setGrid(generateGridWithoutPath(grid)));
-      setIsVisualizationFinished(true);
-    }
-
+    dispatch(setGrid(generateGridWithoutPath(grid)));
+    setIsVisualizationFinished(true);
   };
 
   const clearBoard = () => {
-    if (!isAnimationInProgress) {
-      dispatch(setGrid(generateInitalGrid(startCoords, targetCoords)));
-      setIsVisualizationFinished(true);
-    }
+    dispatch(setGrid(generateInitalGrid(startCoords, targetCoords)));
+    setIsVisualizationFinished(true);
   };
 
   const animateMaze = (queue: NodeCoords[]) => {
@@ -140,10 +132,11 @@ const NavMenu = () => {
   };
 
   const runAlgorithm = () => {
+    clearPath()
     setIsAnimationInProgress(true);
     setIsVisualizationFinished(false);
 
-    let map= new Map<string, any>([
+    let map = new Map<string, any>([
       [BFS, new BFS_Algo(grid, grid[startCoords.row][startCoords.col], grid[targetCoords.row][targetCoords.col])],
       [DFS, new DFS_Algo(grid, grid[startCoords.row][startCoords.col], grid[targetCoords.row][targetCoords.col])],
       [GREEDY_BFS, new GREEDY_Algo(grid, grid[startCoords.row][startCoords.col], grid[targetCoords.row][targetCoords.col])],
@@ -155,7 +148,7 @@ const NavMenu = () => {
   };
 
   return (
-    <div className="nav-bar">
+    <div className="nav-bar" style={{ height: NAV_MENU_HEIGHT }}>
       <Dropdown
         title={"Generate maze"}
         isAnimationInProgress={isAnimationInProgress}
@@ -168,19 +161,27 @@ const NavMenu = () => {
         isAnimationInProgress={isAnimationInProgress}
         isVisualizationFinished={isVisualizationFinished}
         options={[BFS, DFS, GREEDY_BFS, A_STAR]}
-        callSetOptionMethod={updateSelectedAlgorithm}
+        callSetOptionMethod={(algorithm: string) => setSelectedAlgorithm(algorithm)}
       ></Dropdown>
 
-      <div className="nav-bar-item" >
-        <button disabled={(isAnimationInProgress || !isVisualizationFinished)} className="visualize-btn" onClick={() => runAlgorithm()}> Visualize {selectedAlgorithm}! </button>
-      </div>
+      <VisualizeButton
+        selectedAlgorithm={selectedAlgorithm}
+        isAnimationInProgress={isAnimationInProgress}
+        isVisualizationFinished={isVisualizationFinished}
+        callSetOptionMethod={runAlgorithm}
+      ></VisualizeButton>
 
-      <div className="nav-bar-item" onClick={clearPath}>
-        <p>Clear path</p>
-      </div>
-      <div className="nav-bar-item" onClick={clearBoard}>
-        <p>Clear board</p>
-      </div>
+      <ClearButton
+        text={"Clear path"}
+        isAnimationInProgress={isAnimationInProgress}
+        callSetOptionMethod={clearPath}
+      ></ClearButton>
+
+      <ClearButton
+        text={"Clear board"}
+        isAnimationInProgress={isAnimationInProgress}
+        callSetOptionMethod={clearBoard}
+      ></ClearButton>
     </div>
   );
 };

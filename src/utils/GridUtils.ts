@@ -84,9 +84,9 @@ export const generateNodeKey = (row: number, col: number): string => {
 
 /** ----------- FOR ALGORITHMS -------------- */
 export const deepCopyGrid = (grid: NodeInterface[][]): NodeInterface[][] => {
-    return grid.map( arr => {
-        return arr.slice();
-    });
+    return grid.map( arr => arr.map( node => 
+        node.isStart || node.isFinish ? {...node, isWall: false} : node
+    ));
 }
 
 export const getMapKey = (node: NodeInterface | NodeCoords): string => {

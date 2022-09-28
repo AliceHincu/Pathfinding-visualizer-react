@@ -1,4 +1,7 @@
-interface DrodownProps{
+import { useState } from "react";
+import { NAV_MENU_HEIGHT } from "../../constants/dimensions";
+
+interface DrodownProps {
   title: string;
   isAnimationInProgress: boolean;
   isVisualizationFinished: boolean;
@@ -6,24 +9,41 @@ interface DrodownProps{
   callSetOptionMethod: (option: string) => void;
 }
 
-export const Dropdown = ({title, isAnimationInProgress, isVisualizationFinished, options, callSetOptionMethod}:DrodownProps) => {
-  let optionsItem = options.map((option:string) => 
-    <div onClick={() => callSetOptionMethod(option)}> {option} </div>
+export const Dropdown = ({ title, isAnimationInProgress, isVisualizationFinished, options, callSetOptionMethod }: DrodownProps) => {
+  const [isHover, setIsHover] = useState(false);
+
+  let optionsItem = options.map((option: string) =>
+    <div key={option} onClick={() => callSetOptionMethod(option)}> {option} </div>
   )
+
+  function getBgColor() {
+    if (isHover) {
+      if (isAnimationInProgress || !isVisualizationFinished)
+        return "#cccccc"
+      else
+        return "#22c4dd"
+    }
+    return ""
+  }
+
   return (
-    <div className="dropdown">
+    <div className="dropdown"
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}>
       <button className="dropbtn"
-        style = {{backgroundColor:  isAnimationInProgress || !isVisualizationFinished ? "#cccccc" : ""}}>
-        {title}
-        <i
-          className="fa fa-caret-down"
-          style={{ margin: `0 0 0 0.5rem` }}
-        ></i>
+        style={{ backgroundColor: getBgColor(), height: NAV_MENU_HEIGHT }}>
+        <p>
+          {title}
+          <i
+            className="fa fa-caret-down"
+            style={{ margin: `0 0 0 0.5rem` }}
+          ></i>
+        </p>
       </button>
-      <div 
-        className="dropdown-content" 
+      <div
+        className="dropdown-content"
         style={{ visibility: isAnimationInProgress || !isVisualizationFinished ? "hidden" : "visible" }}>
-          {optionsItem}
+        {optionsItem}
       </div>
     </div>
   )
