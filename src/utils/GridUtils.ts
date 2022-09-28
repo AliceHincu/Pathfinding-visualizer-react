@@ -84,7 +84,7 @@ export const generateNodeKey = (row: number, col: number): string => {
 
 /** ----------- FOR ALGORITHMS -------------- */
 export const deepCopyGrid = (grid: NodeInterface[][]): NodeInterface[][] => {
-    return grid.map(function (arr) {
+    return grid.map( arr => {
         return arr.slice();
     });
 }

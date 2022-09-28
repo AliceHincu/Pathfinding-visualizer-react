@@ -1,90 +1,61 @@
-import { COLUMN_COUNT, ROW_COUNT } from "../../constants/grid-details";
 import { NodeCoords } from "../../redux-features/boardSlice";
-import { NodeInterface } from "../GridUtils";
+import { addToParentMap, direction, getMapKey, isSolution, isValid, NodeInterface, recreatePath } from "../GridUtils";
+import { IAlgorithm, SolutionAlgo } from "./IAlgorithm";
 
-const direction = {
-    row: [-1, 0, 1, 0],
-    col: [0, 1, 0, -1]
-}
+export default class BFS_Algo implements IAlgorithm{
+    grid: NodeInterface[][];
+    start: NodeCoords;
+    target: NodeCoords;
+    queue: NodeCoords[];
+    queueVisitedAnimated: NodeCoords[];
+    parentMap: Map<string, NodeCoords | null>;
 
-// Function to check if a cell can be visited or not
-const isValid = (grid: NodeInterface[][], visited: Map<string, NodeCoords | null>, nodeCoords: number[]) => {
-    // If cell lies out of bounds
-    if (nodeCoords[0] < 0 || nodeCoords[1] < 0 || nodeCoords[0] >= ROW_COUNT || nodeCoords[1] >= COLUMN_COUNT)
-        return false;
-
-    // If cell is already visited or is a wall
-    if (visited.has(nodeCoords.toString()) || grid[nodeCoords[0]][nodeCoords[1]].isWall)
-        return false;
-
-    // Otherwise
-    return true;
-}
-
-const isSolution = (node: number[], target: number[]) => {
-    return node[0] === target[0] && node[1] == target[1]
-}
-
-const recreatePath = (parentMap:  Map<string, NodeCoords | null>, targetCoords: number[]) => {
-    let path = []
-    let current: NodeCoords|null|undefined = parentMap.get(targetCoords.toString());
-    while (current != null) {
-        path.push(current);
-        current = parentMap.get([current.row, current.col].toString());
+    constructor(grid: NodeInterface[][], startCoords: NodeCoords, targetCoords: NodeCoords) {
+        this.grid = grid;
+        this.start = startCoords;
+        this.target = targetCoords;
+        this.queue = [];
+        this.queueVisitedAnimated = [];
+        this.parentMap = new Map<string, NodeCoords | null>();
     }
-    return path.reverse()
-}
 
-export interface SolutionBFS{
-    path: NodeCoords[],
-    queueVisitedAnimated: NodeCoords[][]
-}
+    run(): SolutionAlgo {
+        const resultPath = this.bfs();
+        const result: SolutionAlgo = {
+            path: resultPath,
+            queueVisitedAnimated: this.queueVisitedAnimated
+        }
+        return result;
+    }
 
-export const bfs = (grid: NodeInterface[][], startCoords: number[], targetCoords: number[]):SolutionBFS => {
-    // Stores indices of the matrix cells
-    const queue: number[][] = [];
-    const queueVisitedAnimated: NodeCoords[][] = []
-    // Stores the node and the prev node
-    const parentMap = new Map<string, NodeCoords | null>();
+    bfs(): NodeCoords[] {
+        this.queue.push(this.start);
+        addToParentMap(this.parentMap, this.start, null);
 
-    // Mark the starting cell as visited and push it into the queue
-    queue.push(startCoords);
-    parentMap.set(startCoords.toString(), null); // Mark source as visited
+        while (this.queue.length !== 0) {
+            let currentNode: NodeCoords = this.queue[0];
+            this.queue.shift();
 
-    // Iterate while the queue is not empty and target is not reached
-    let currentNode: number[];
-    while (queue.length !== 0) {
-        currentNode = queue[0];
-        queue.shift();
-
-        let currentVisitedForQueue: NodeCoords[] = []
-
-        // Go to the adjacent cells
-        for (var i = 0; i < 4; i++) {
-            const newNodeCoords: number[] = [currentNode[0] + direction.row[i], currentNode[1] + direction.col[i]]
-
-            if (isSolution(newNodeCoords, targetCoords)) {
-                parentMap.set(targetCoords.toString(), {row:currentNode[0], col:currentNode[1]})
-                let path = recreatePath(parentMap, targetCoords);
-                path = path.slice(1, path.length)
-                return {
-                    path: path,
-                    queueVisitedAnimated: queueVisitedAnimated
+            // Go to the adjacent cells
+            for (var i = 0; i < 4; i++) {
+                const newNodeCoords: NodeCoords = {
+                    row: currentNode.row + direction.row[i],
+                    col: currentNode.col + direction.col[i]
                 }
-            }
 
-            if (isValid(grid, parentMap, newNodeCoords)) {
-                parentMap.set(newNodeCoords.toString(), {row:currentNode[0], col:currentNode[1]})
-                queue.push(newNodeCoords);
-                currentVisitedForQueue.push({row: newNodeCoords[0], col: newNodeCoords[1]})
+                if (isSolution(newNodeCoords, this.target)) {
+                    addToParentMap(this.parentMap, this.target, currentNode);
+                    return recreatePath(this.parentMap, this.target);
+                }
+
+                if (isValid(newNodeCoords, this.parentMap, this.grid)) {
+                    this.parentMap.set(getMapKey(newNodeCoords), currentNode)
+                    this.queue.push(newNodeCoords);
+                    this.queueVisitedAnimated.push(newNodeCoords);
+                }
             }
         }
 
-        queueVisitedAnimated.push(currentVisitedForQueue);
-    }
-
-    return {
-        path: [],
-        queueVisitedAnimated: queueVisitedAnimated
+        return [];
     }
 }

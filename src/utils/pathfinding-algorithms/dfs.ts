@@ -1,16 +1,12 @@
 import { NodeCoords } from "../../redux-features/boardSlice";
 import { addToParentMap, direction, getMapKey, isSolution, isValid, NodeInterface, recreatePath } from "../GridUtils";
+import { IAlgorithm, SolutionAlgo } from "./IAlgorithm";
 
-export interface SolutionDFS{
-    path: NodeCoords[],
-    queueVisitedAnimated: NodeCoords[]
-}
-
-export default class DFS_Algo {
+export default class DFS_Algo implements IAlgorithm{
     grid: NodeInterface[][];
     start: NodeCoords;
     target: NodeCoords;
-    stack: number[][];
+    stack: NodeCoords[];
     queueVisitedAnimated: NodeCoords[];
     parentMap: Map<string, NodeCoords | null>;
     solutionFound: boolean;
@@ -19,48 +15,49 @@ export default class DFS_Algo {
         this.grid = grid;
         this.start = startCoords;
         this.target = targetCoords;
-        this.stack = [];
+        this.stack = []
         this.queueVisitedAnimated = [];
         this.parentMap = new Map<string, NodeCoords | null>();
         this.solutionFound = false;
     }
 
-    run(): SolutionDFS {
-        const resultPath = this.dfsUtil(this.start, null);
-        const result: SolutionDFS = {
-            path: resultPath == undefined ? [] : resultPath,
+    run(): SolutionAlgo {
+        const resultPath = this.dfs();
+
+        const result: SolutionAlgo = {
+            path: resultPath,
             queueVisitedAnimated: this.queueVisitedAnimated.slice(1, this.queueVisitedAnimated.length)
         }
         return result;
     }
 
-    dfsUtil(currentNode: NodeCoords, parent:NodeCoords|null): NodeCoords[]|undefined {
-        if(this.solutionFound)
-            return;
-            
-        if (isSolution(currentNode, this.target)) {
-            addToParentMap(this.parentMap, currentNode, parent)
-            let path = recreatePath(this.parentMap, this.target);
-            this.solutionFound = true;
-            return path;
-        }
-             
-        if(!isValid(currentNode, this.parentMap, this.grid))
-            return;
+    dfs(): NodeCoords[] {
+        this.stack.push(this.start);
+        addToParentMap(this.parentMap, this.start, null);
         
-        // Mark the node as visited
-        addToParentMap(this.parentMap, currentNode, parent)       
-        this.queueVisitedAnimated.push(currentNode)
+        while (this.stack.length !== 0) {
+            let currentNode: NodeCoords = this.stack.pop()!;
+            this.queueVisitedAnimated.push(currentNode);
 
-        // Push all the adjacent cells
-        for (var i = 0; i < 4; i++) {
-            const newNodeCoords: NodeCoords = {
-                row: currentNode.row + direction.row[i], 
-                col: currentNode.col + direction.col[i]
+
+            // Go to the adjacent cells
+            for (var i = 0; i < 4; i++) {
+                const newNodeCoords: NodeCoords = {
+                    row: currentNode.row + direction.row[i],
+                    col: currentNode.col + direction.col[i]
+                }
+
+                if (isSolution(newNodeCoords, this.target)) {
+                    addToParentMap(this.parentMap, this.target, currentNode);
+                    return recreatePath(this.parentMap, this.target);
+                }
+
+                if (isValid(newNodeCoords, this.parentMap, this.grid)) {
+                    this.parentMap.set(getMapKey(newNodeCoords), currentNode)
+                    this.stack.push(newNodeCoords);
+                }
             }
-            let result = this.dfsUtil(newNodeCoords, currentNode)
-            if(result != null)
-                return result;
         }
+        return [];
     }
 }
