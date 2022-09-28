@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { selectIsAnimationInProgress } from "../../redux-features/boardSlice";
+import { useAppSelector } from "../../redux-features/hooks";
 
 interface ClearButtonProps {
     text: string;
-    isAnimationInProgress: boolean;
     callSetOptionMethod: () => void;
 }
 
-export const ClearButton = ({ text, isAnimationInProgress, callSetOptionMethod }: ClearButtonProps) => {
+export const ClearButton = ({ text, callSetOptionMethod }: ClearButtonProps) => {
     const [isHover, setIsHover] = useState(false);
+    const isAnimationInProgress = useAppSelector(selectIsAnimationInProgress);
 
     function getBgColor() {
         if (isHover)

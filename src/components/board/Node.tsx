@@ -28,9 +28,10 @@ import "./Node.css";
 
 interface NodeProps {
   node: NodeInterface;
+  isAnimationInProgress: boolean;
 }
 
-const Node = ({ node }: NodeProps) => {
+const Node = ({ node, isAnimationInProgress }: NodeProps) => {
   const nodeCoords: NodeCoords = { row: node.row, col: node.col };
   const nodeDraggedType = useSelector(selectNodeType);
   const mouseState = useSelector(selectMouse);
@@ -44,19 +45,21 @@ const Node = ({ node }: NodeProps) => {
     return node.isFinish
       ? TARGET
       : node.isStart
-      ? START
-      : node.isPath
-      ? PATH
-      : node.isWall
-      ? WALL
-      : node.isVisited
-      ? VISITED
-      : UNVISITED;
+        ? START
+        : node.isPath
+          ? PATH
+          : node.isWall
+            ? WALL
+            : node.isVisited
+              ? VISITED
+              : UNVISITED;
   };
 
   let nodeType = getNodeType();
 
   const onMouseDownHandler = () => {
+    if (isAnimationInProgress) return;
+
     if (!node.isFinish && !node.isStart) {
       if (nodeDraggedType === WALL)
         dispatch(setWallNode({ ...nodeCoords, isWall: true }));
@@ -71,13 +74,10 @@ const Node = ({ node }: NodeProps) => {
   };
 
   const onMouseEnterHandler = () => {
+    if (isAnimationInProgress) return;
     if (!mouseState) return;
-    if (
-      !isStartDragged &&
-      !isTargetDragged &&
-      nodeDraggedType !== START &&
-      nodeDraggedType !== TARGET
-    ) {
+
+    if (!isStartDragged && !isTargetDragged && nodeDraggedType !== START && nodeDraggedType !== TARGET) {
       if (nodeDraggedType === WALL && node.isWall === false && node.isStart === false && node.isFinish === false)
         dispatch(setWallNode({ ...nodeCoords, isWall: true }));
       if (nodeDraggedType === UNVISITED && node.isWall === true)

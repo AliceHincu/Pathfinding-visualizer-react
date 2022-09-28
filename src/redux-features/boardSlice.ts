@@ -16,6 +16,7 @@ interface BoardState {
   mouse: boolean,
   startDragged: boolean,
   targetDragged: boolean,
+  animationInProgress: boolean,
 }
 
 const initialState: BoardState = {
@@ -31,6 +32,7 @@ const initialState: BoardState = {
   mouse: false,
   startDragged: false,
   targetDragged: false,
+  animationInProgress: false,
 }
 
 export interface NodeCoords {
@@ -83,15 +85,19 @@ export const boardSlice = createSlice({
     },
     targetIsDragged: (state, action: PayloadAction<boolean>) => {
       state.targetDragged = action.payload
-    }
+    },
+    setAnimationInProgress: (state, action: PayloadAction<boolean>) => {
+      state.animationInProgress = action.payload
+    },
   }
 })
 
-export const { setNode, setGrid, setWallNode, setStartNode, setTargetNode, isMousePressed, startIsDragged, targetIsDragged } = boardSlice.actions;
+export const { setNode, setGrid, setWallNode, setStartNode, setTargetNode, isMousePressed, startIsDragged, targetIsDragged, setAnimationInProgress } = boardSlice.actions;
 export const selectGrid = (state: RootState) => state.board.grid;
 export const selectMouse = (state: RootState) => state.board.mouse;
 export const selectIsStartDragged = (state: RootState) => state.board.startDragged;
 export const selectIsTargetDragged = (state: RootState) => state.board.targetDragged;
 export const selectStartCoords = (state: RootState) => state.board.startNodeCoords;
 export const selectTargetCoords = (state: RootState) => state.board.targetNodeCoords;
+export const selectIsAnimationInProgress = (state: RootState) => state.board.animationInProgress;
 export default boardSlice.reducer

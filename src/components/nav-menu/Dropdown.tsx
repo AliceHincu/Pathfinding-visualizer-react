@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { NAV_MENU_HEIGHT } from "../../constants/dimensions";
+import { selectIsAnimationInProgress } from "../../redux-features/boardSlice";
+import { useAppSelector } from "../../redux-features/hooks";
 
 interface DrodownProps {
   title: string;
-  isAnimationInProgress: boolean;
   isVisualizationFinished: boolean;
   options: string[];
   callSetOptionMethod: (option: string) => void;
 }
 
-export const Dropdown = ({ title, isAnimationInProgress, isVisualizationFinished, options, callSetOptionMethod }: DrodownProps) => {
+export const Dropdown = ({ title, isVisualizationFinished, options, callSetOptionMethod }: DrodownProps) => {
   const [isHover, setIsHover] = useState(false);
+  const isAnimationInProgress = useAppSelector(selectIsAnimationInProgress);
 
   let optionsItem = options.map((option: string) =>
     <div key={option} onClick={() => callSetOptionMethod(option)}> {option} </div>

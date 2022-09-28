@@ -20,6 +20,7 @@ import {
   selectTargetCoords,
   setGrid,
   setNode,
+  setAnimationInProgress
 } from "../../redux-features/boardSlice";
 import { useAppDispatch, useAppSelector } from "../../redux-features/hooks";
 import { randomMaze } from "../../utils/generation-maze/RandomMaze";
@@ -67,6 +68,7 @@ const NavMenu = () => {
       if (i == queue.length - 1) {
         clearInterval(interval)
         setIsAnimationInProgress(false)
+        dispatch(setAnimationInProgress(false))
       }
       i++;
     }, ANIMATION_MAZE_TIME)
@@ -84,6 +86,7 @@ const NavMenu = () => {
       if (i == path.length - 1) {
         clearInterval(interval)
         setIsAnimationInProgress(false);
+        dispatch(setAnimationInProgress(false));
       }
 
       i++;
@@ -94,6 +97,7 @@ const NavMenu = () => {
     let i = 0;
     if (stack.length === 0) {
       setIsAnimationInProgress(false);
+      dispatch(setAnimationInProgress(false));
       return;
     }
 
@@ -128,13 +132,16 @@ const NavMenu = () => {
     }
 
     setIsAnimationInProgress(true)
+    dispatch(setAnimationInProgress(true))
     animateMaze(queue);
   };
 
   const runAlgorithm = () => {
     clearPath()
     setIsAnimationInProgress(true);
+    dispatch(setAnimationInProgress(true));
     setIsVisualizationFinished(false);
+    
 
     let map = new Map<string, any>([
       [BFS, new BFS_Algo(grid, grid[startCoords.row][startCoords.col], grid[targetCoords.row][targetCoords.col])],
@@ -151,14 +158,12 @@ const NavMenu = () => {
     <div className="nav-bar" style={{ height: NAV_MENU_HEIGHT }}>
       <Dropdown
         title={"Generate maze"}
-        isAnimationInProgress={isAnimationInProgress}
         isVisualizationFinished={isVisualizationFinished}
         options={[RECURSIVE_DIVISON, RANDOM]}
         callSetOptionMethod={generateWalls}
       ></Dropdown>
       <Dropdown
         title={"Generate algorithm"}
-        isAnimationInProgress={isAnimationInProgress}
         isVisualizationFinished={isVisualizationFinished}
         options={[BFS, DFS, GREEDY_BFS, A_STAR]}
         callSetOptionMethod={(algorithm: string) => setSelectedAlgorithm(algorithm)}
@@ -166,20 +171,17 @@ const NavMenu = () => {
 
       <VisualizeButton
         selectedAlgorithm={selectedAlgorithm}
-        isAnimationInProgress={isAnimationInProgress}
         isVisualizationFinished={isVisualizationFinished}
         callSetOptionMethod={runAlgorithm}
       ></VisualizeButton>
 
       <ClearButton
         text={"Clear path"}
-        isAnimationInProgress={isAnimationInProgress}
         callSetOptionMethod={clearPath}
       ></ClearButton>
 
       <ClearButton
         text={"Clear board"}
-        isAnimationInProgress={isAnimationInProgress}
         callSetOptionMethod={clearBoard}
       ></ClearButton>
     </div>

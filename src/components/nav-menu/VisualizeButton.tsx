@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { NAV_MENU_HEIGHT } from "../../constants/dimensions";
+import { selectIsAnimationInProgress } from "../../redux-features/boardSlice";
+import { useAppSelector } from "../../redux-features/hooks";
 
 interface VisualizeButtonProps {
     selectedAlgorithm: string;
-    isAnimationInProgress: boolean;
     isVisualizationFinished: boolean;
     callSetOptionMethod: () => void;
 }
 
-export const VisualizeButton = ({ selectedAlgorithm, isAnimationInProgress, isVisualizationFinished, callSetOptionMethod }: VisualizeButtonProps) => {
+export const VisualizeButton = ({ selectedAlgorithm, isVisualizationFinished, callSetOptionMethod }: VisualizeButtonProps) => {
     const [isHover, setIsHover] = useState(false);
+    const isAnimationInProgress = useAppSelector(selectIsAnimationInProgress);
 
     function getBgColor() {
         if (isHover) {
