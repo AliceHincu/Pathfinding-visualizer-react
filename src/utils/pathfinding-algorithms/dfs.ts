@@ -1,24 +1,24 @@
 import { NodeCoords } from "../../redux-features/boardSlice";
-import { addToParentMap, direction, getMapKey, isSolution, isValid, NodeInterface, recreatePath } from "../GridUtils";
+import { addToParentMap, deepCopyGrid, direction, generateVisitedGrid, getMapKey, isSolution, isValid, isValidVis, NodeInterface, recreatePath } from "../GridUtils";
 import { IAlgorithm, SolutionAlgo } from "./IAlgorithm";
 
 export default class DFS_Algo implements IAlgorithm{
     grid: NodeInterface[][];
+    visited: boolean[][];
     start: NodeCoords;
     target: NodeCoords;
     stack: NodeCoords[];
     queueVisitedAnimated: NodeCoords[];
     parentMap: Map<string, NodeCoords | null>;
-    solutionFound: boolean;
 
     constructor(grid: NodeInterface[][], startCoords: NodeCoords, targetCoords: NodeCoords){
-        this.grid = grid;
+        this.grid = deepCopyGrid(grid);
+        this.visited = generateVisitedGrid();
         this.start = startCoords;
         this.target = targetCoords;
-        this.stack = []
+        this.stack = [];
         this.queueVisitedAnimated = [];
         this.parentMap = new Map<string, NodeCoords | null>();
-        this.solutionFound = false;
     }
 
     run(): SolutionAlgo {
@@ -38,7 +38,7 @@ export default class DFS_Algo implements IAlgorithm{
         while (this.stack.length !== 0) {
             let currentNode: NodeCoords = this.stack.pop()!;
             this.queueVisitedAnimated.push(currentNode);
-
+            this.visited[currentNode.row][currentNode.col] = true;
 
             // Go to the adjacent cells
             for (var i = 0; i < 4; i++) {
@@ -52,12 +52,13 @@ export default class DFS_Algo implements IAlgorithm{
                     return recreatePath(this.parentMap, this.target);
                 }
 
-                if (isValid(newNodeCoords, this.parentMap, this.grid)) {
+                if (isValidVis(newNodeCoords, this.visited, this.grid)) {
                     this.parentMap.set(getMapKey(newNodeCoords), currentNode)
                     this.stack.push(newNodeCoords);
                 }
             }
         }
+
         return [];
     }
 }

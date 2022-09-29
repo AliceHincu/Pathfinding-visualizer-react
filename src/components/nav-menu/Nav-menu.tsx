@@ -111,7 +111,12 @@ const NavMenu = () => {
 
       if (i == stack.length - 1) {
         clearInterval(interval)
-        animatePath(path)
+        if(path.length !== 0){
+          animatePath(path)
+        } else {
+          setIsAnimationInProgress(false);
+          dispatch(setAnimationInProgress(false));
+        }
       }
 
       i++;

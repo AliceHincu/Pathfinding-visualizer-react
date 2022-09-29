@@ -57,6 +57,22 @@ export const generateInitalGrid = (startCoords: NodeCoords, targetCoords: NodeCo
     return grid;
 }
 
+export const generateVisitedGrid = () => {
+    const grid: boolean[][] = [];
+
+    for (let row = 0; row < ROW_COUNT; row++) {
+        const currentRow = [];
+
+        for (let col = 0; col < COLUMN_COUNT; col++) {
+            currentRow.push(false);
+        }
+
+        grid.push(currentRow);
+    }
+
+    return grid;
+}
+
 export const generateGridWithoutPath = (initialGrid: NodeInterface[][]): NodeInterface[][] => {
     let newGrid: NodeInterface[][] = []
 
@@ -104,6 +120,19 @@ export const isValid = (nodeCoords: NodeCoords, parentMap: Map<string, NodeCoord
 
     // If cell is already visited or is a wall
     if (parentMap.has(getMapKey(nodeCoords)) || grid[nodeCoords.row][nodeCoords.col].isWall)
+        return false;
+
+    // Otherwise
+    return true;
+}
+
+export const isValidVis = (nodeCoords: NodeCoords, visited: boolean[][], grid: NodeInterface[][]): boolean => {
+    // If cell lies out of bounds
+    if (nodeCoords.row < 0 || nodeCoords.col < 0 || nodeCoords.row >= ROW_COUNT || nodeCoords.col >= COLUMN_COUNT)
+        return false;
+
+    // If cell is already visited or is a wall
+    if (visited[nodeCoords.row][nodeCoords.col] || grid[nodeCoords.row][nodeCoords.col].isWall)
         return false;
 
     // Otherwise

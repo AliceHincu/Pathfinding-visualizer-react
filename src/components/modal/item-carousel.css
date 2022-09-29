@@ -1,0 +1,9 @@
+.carousel-item-mine {
+    width: '75%'; 
+    margin: 'auto';
+    text-align: 'center';
+}
+
+.carousel{
+    height: 100%;
+}

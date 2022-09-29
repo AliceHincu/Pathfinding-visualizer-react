@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NAV_MENU_HEIGHT } from "../../constants/dimensions";
 import { selectIsAnimationInProgress } from "../../redux-features/boardSlice";
 import { useAppSelector } from "../../redux-features/hooks";
+import './Nav-menu.css'
 
 interface DrodownProps {
   title: string;
@@ -29,7 +30,7 @@ export const Dropdown = ({ title, isVisualizationFinished, options, callSetOptio
   }
 
   return (
-    <div className="dropdown"
+    <div className="dropdown-menu-nav-bar"
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}>
       <button className="dropbtn"

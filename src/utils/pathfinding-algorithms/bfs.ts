@@ -1,9 +1,10 @@
 import { NodeCoords } from "../../redux-features/boardSlice";
-import { addToParentMap, direction, getMapKey, isSolution, isValid, NodeInterface, recreatePath } from "../GridUtils";
+import { addToParentMap, deepCopyGrid, direction, generateVisitedGrid, getMapKey, isSolution, isValid, NodeInterface, recreatePath } from "../GridUtils";
 import { IAlgorithm, SolutionAlgo } from "./IAlgorithm";
 
 export default class BFS_Algo implements IAlgorithm{
     grid: NodeInterface[][];
+    visited: boolean[][];
     start: NodeCoords;
     target: NodeCoords;
     queue: NodeCoords[];
@@ -11,7 +12,8 @@ export default class BFS_Algo implements IAlgorithm{
     parentMap: Map<string, NodeCoords | null>;
 
     constructor(grid: NodeInterface[][], startCoords: NodeCoords, targetCoords: NodeCoords) {
-        this.grid = grid;
+        this.grid = deepCopyGrid(grid);
+        this.visited = generateVisitedGrid();
         this.start = startCoords;
         this.target = targetCoords;
         this.queue = [];
@@ -33,9 +35,9 @@ export default class BFS_Algo implements IAlgorithm{
         addToParentMap(this.parentMap, this.start, null);
 
         while (this.queue.length !== 0) {
-            let currentNode: NodeCoords = this.queue[0];
-            this.queue.shift();
-
+            let currentNode: NodeCoords = this.queue.shift()!;
+            this.queueVisitedAnimated.push(currentNode);
+            
             // Go to the adjacent cells
             for (var i = 0; i < 4; i++) {
                 const newNodeCoords: NodeCoords = {
@@ -51,7 +53,6 @@ export default class BFS_Algo implements IAlgorithm{
                 if (isValid(newNodeCoords, this.parentMap, this.grid)) {
                     this.parentMap.set(getMapKey(newNodeCoords), currentNode)
                     this.queue.push(newNodeCoords);
-                    this.queueVisitedAnimated.push(newNodeCoords);
                 }
             }
         }

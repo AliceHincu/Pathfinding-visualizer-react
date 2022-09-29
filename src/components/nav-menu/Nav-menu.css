@@ -15,12 +15,13 @@
     cursor: pointer;
 }
 
-.dropdown {
+.dropdown-menu-nav-bar {
+    position: static ;
     align-items: center;
     overflow: hidden;
 }
 
-.dropdown .dropbtn {
+.dropdown-menu-nav-bar .dropbtn {
     align-items: center;
     min-width: 11rem;
     padding: 0 2rem;
@@ -55,7 +56,7 @@
     cursor: pointer;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown-menu-nav-bar:hover .dropdown-content {
     display: block;
 }
 
@@ -92,7 +93,7 @@
     cursor: default;
 }
 
-p {
+button > p {
     margin: 0;
     padding: 0;
     font-size: 1.1rem;
