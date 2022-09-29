@@ -95,7 +95,7 @@ const IntroductiveCarousel = () => {
         </Carousel.Item>
         <Carousel.Item>
             <div style={{width: '75%', margin: 'auto', textAlign: 'center', height: '100%'}}>
-                <h2>Greedy Best First Search</h2>
+                <h2>Greedy BFS</h2>
                 <br></br>
                 <img src={greedyImg} style={{width: 'inherit'}}></img>
                 <br></br><br></br>
